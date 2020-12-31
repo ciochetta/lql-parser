@@ -67,3 +67,15 @@ test("tokenize string array", () => {
 
 	expect(separatorToken.type).toBe("comma");
 });
+
+test("tokenize string with numbers", () => {
+	const testCommand = `admin123`;
+
+	lexer.reset(testCommand);
+
+	const token = lexer.next();
+
+	expect(token.type).toBe("word");
+
+	expect(token.value).toBe("admin123");
+});
