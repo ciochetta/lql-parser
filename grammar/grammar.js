@@ -12,6 +12,7 @@ var grammar = {
     {"name": "kw_using", "symbols": [(lexer.has("keywords") ? {type: "keywords"} : keywords)]},
     {"name": "kw_create", "symbols": [(lexer.has("keywords") ? {type: "keywords"} : keywords)]},
     {"name": "kw_insert", "symbols": [(lexer.has("insert") ? {type: "insert"} : insert)]},
+    {"name": "kw_where", "symbols": [(lexer.has("keywords") ? {type: "keywords"} : keywords)]},
     {"name": "word", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": d => d[0].value},
     {"name": "word", "symbols": [(lexer.has("quotationWord") ? {type: "quotationWord"} : quotationWord)], "postprocess": d => d[0].value.replaceAll('"', '')},
     {"name": "word", "symbols": [(lexer.has("quotationWordNumber") ? {type: "quotationWordNumber"} : quotationWordNumber)], "postprocess": d => d[0].value.replaceAll('"', '')},
@@ -34,6 +35,33 @@ var grammar = {
     {"name": "table_name", "symbols": ["word"], "postprocess": d => d[0]},
     {"name": "column_name", "symbols": ["word"], "postprocess": d => d[0]},
     {"name": "database_name", "symbols": ["word"], "postprocess": d => d[0]},
+    {"name": "operator", "symbols": [(lexer.has("equal") ? {type: "equal"} : equal)], "postprocess": d => "equal"},
+    {"name": "operator", "symbols": [(lexer.has("bigger") ? {type: "bigger"} : bigger)], "postprocess": d => "bigger"},
+    {"name": "operator", "symbols": [(lexer.has("smaller") ? {type: "smaller"} : smaller)], "postprocess": d => "smaller"},
+    {"name": "operator", "symbols": [(lexer.has("biggerEqual") ? {type: "biggerEqual"} : biggerEqual)], "postprocess": d => "biggerEqual"},
+    {"name": "operator", "symbols": [(lexer.has("smallerEqual") ? {type: "smallerEqual"} : smallerEqual)], "postprocess": d => "smallerEqual"},
+    {"name": "operator", "symbols": [(lexer.has("like") ? {type: "like"} : like)], "postprocess": d => "like"},
+    {"name": "and", "symbols": [(lexer.has("and") ? {type: "and"} : and)]},
+    {"name": "where_statement", "symbols": ["kw_where", (lexer.has("ws") ? {type: "ws"} : ws), "comparison"], "postprocess":  d => {
+            return [d[2]]
+        } },
+    {"name": "where_statement", "symbols": ["where_statement", (lexer.has("ws") ? {type: "ws"} : ws), "and", (lexer.has("ws") ? {type: "ws"} : ws), "comparison"], "postprocess": 
+        d => {
+            let arr = d[0]
+        
+            arr.push(d[4])
+        
+            return arr
+        
+        }   
+        },
+    {"name": "comparison", "symbols": ["word", (lexer.has("ws") ? {type: "ws"} : ws), "operator", (lexer.has("ws") ? {type: "ws"} : ws), "word"], "postprocess":  d => {
+            return{
+                "key": d[0],
+                "value" :d[4],
+                "operator": d[2]
+            }
+        } },
     {"name": "select_statement", "symbols": ["kw_select", (lexer.has("ws") ? {type: "ws"} : ws), "select_what", (lexer.has("ws") ? {type: "ws"} : ws), "kw_from", (lexer.has("ws") ? {type: "ws"} : ws), "table_name"], "postprocess":  d => {
             return{
                 "type":"select",
@@ -41,6 +69,16 @@ var grammar = {
                     "columns" : d[2],
                     "table": d[6]
                 }        
+            }
+        } },
+    {"name": "select_statement", "symbols": ["kw_select", (lexer.has("ws") ? {type: "ws"} : ws), "select_what", (lexer.has("ws") ? {type: "ws"} : ws), "kw_from", (lexer.has("ws") ? {type: "ws"} : ws), "table_name", (lexer.has("ws") ? {type: "ws"} : ws), "where_statement"], "postprocess":  d => {
+            return{
+                "type":"select",
+                "params":{
+                    "columns" : d[2],
+                    "table": d[6],
+                    "where":d[8]
+                }
             }
         } },
     {"name": "select_what", "symbols": [(lexer.has("star") ? {type: "star"} : star)], "postprocess": d => "star"},

@@ -9,6 +9,7 @@ kw_select -> %keywords
 kw_using -> %keywords
 kw_create -> %keywords
 kw_insert -> %insert
+kw_where -> %keywords
 
 
 word ->  %word {% d => d[0].value %}
@@ -39,3 +40,12 @@ table_name -> word {% d => d[0] %}
 column_name -> word {% d => d[0] %}
 
 database_name -> word {% d => d[0] %}
+
+operator -> %equal {% d => "equal" %}
+operator -> %bigger {% d => "bigger" %}
+operator -> %smaller {% d => "smaller" %}
+operator -> %biggerEqual {% d => "biggerEqual" %}
+operator -> %smallerEqual {% d => "smallerEqual" %}
+operator -> %like {% d => "like" %}
+
+and -> %and

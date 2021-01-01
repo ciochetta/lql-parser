@@ -1,6 +1,6 @@
 const moo = require("moo");
 
-const raw_keywords = ["select", "from", "using", "create"];
+const raw_keywords = ["select", "from", "using", "create", "where"];
 
 let keywords_map = {};
 
@@ -16,6 +16,8 @@ const case_insensitive_keywords = (map) => {
 const lexer = moo.compile({
 	keywords: raw_keywords,
 	insert: "insert",
+	like: "like",
+	and: "and",
 	star: "*",
 	ws: /[ \t]+/,
 	word: /[a-zA-Z0-9]+/,
@@ -27,6 +29,11 @@ const lexer = moo.compile({
 	rcBracket: "}",
 	comma: ",",
 	twoPoints: ":",
+	equal: "=",
+	bigger: ">",
+	smaller: "<",
+	biggerEqual: ">=",
+	smallerEqual: "<=",
 });
 
 module.exports = lexer;

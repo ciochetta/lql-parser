@@ -1,9 +1,10 @@
 {
 	"name": "lql-parser",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "parser for my database project",
 	"main": "index.js",
 	"scripts": {
+		"pretest": "nearleyc grammar/grammar.ne --out grammar/grammar.js",
 		"test": "jest",
 		"watch": "jest --watchAll"
 	},
