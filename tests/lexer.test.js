@@ -7,7 +7,7 @@ test("tokenize a command", () => {
 
 	let selectToken = lexer.next();
 
-	expect(selectToken.type).toBe("keywords");
+	expect(selectToken.type).toBe("select");
 
 	let wsToken = lexer.next();
 
@@ -21,7 +21,7 @@ test("tokenize a command", () => {
 
 	let fromToken = lexer.next();
 
-	expect(fromToken.type).toBe("keywords");
+	expect(fromToken.type).toBe("from");
 
 	lexer.next();
 

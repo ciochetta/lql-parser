@@ -71,8 +71,6 @@ test("Parse command with two where clauses", () => {
 
 	const result = parsing[0];
 
-	console.log(JSON.stringify(result, null, 1));
-
 	expect(result.params.columns).toBe("star");
 	expect(result.params.table).toBe("users");
 	expect(result.type).toBe("select");

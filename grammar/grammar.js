@@ -7,12 +7,14 @@ const lexer = require("./lexer")
 var grammar = {
     Lexer: lexer,
     ParserRules: [
-    {"name": "kw_from", "symbols": [(lexer.has("keywords") ? {type: "keywords"} : keywords)]},
-    {"name": "kw_select", "symbols": [(lexer.has("keywords") ? {type: "keywords"} : keywords)]},
-    {"name": "kw_using", "symbols": [(lexer.has("keywords") ? {type: "keywords"} : keywords)]},
-    {"name": "kw_create", "symbols": [(lexer.has("keywords") ? {type: "keywords"} : keywords)]},
+    {"name": "kw_from", "symbols": [(lexer.has("from") ? {type: "from"} : from)]},
+    {"name": "kw_select", "symbols": [(lexer.has("select") ? {type: "select"} : select)]},
+    {"name": "kw_using", "symbols": [(lexer.has("using") ? {type: "using"} : using)]},
+    {"name": "kw_create", "symbols": [(lexer.has("create") ? {type: "create"} : create)]},
     {"name": "kw_insert", "symbols": [(lexer.has("insert") ? {type: "insert"} : insert)]},
-    {"name": "kw_where", "symbols": [(lexer.has("keywords") ? {type: "keywords"} : keywords)]},
+    {"name": "kw_where", "symbols": [(lexer.has("where") ? {type: "where"} : where)]},
+    {"name": "kw_update", "symbols": [(lexer.has("update") ? {type: "update"} : update)]},
+    {"name": "kw_delete", "symbols": [(lexer.has("deletekw") ? {type: "deletekw"} : deletekw)]},
     {"name": "word", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": d => d[0].value},
     {"name": "word", "symbols": [(lexer.has("quotationWord") ? {type: "quotationWord"} : quotationWord)], "postprocess": d => d[0].value.replaceAll('"', '')},
     {"name": "word", "symbols": [(lexer.has("quotationWordNumber") ? {type: "quotationWordNumber"} : quotationWordNumber)], "postprocess": d => d[0].value.replaceAll('"', '')},
@@ -42,6 +44,7 @@ var grammar = {
     {"name": "operator", "symbols": [(lexer.has("smallerEqual") ? {type: "smallerEqual"} : smallerEqual)], "postprocess": d => "smallerEqual"},
     {"name": "operator", "symbols": [(lexer.has("like") ? {type: "like"} : like)], "postprocess": d => "like"},
     {"name": "and", "symbols": [(lexer.has("and") ? {type: "and"} : and)]},
+    {"name": "set", "symbols": [(lexer.has("set") ? {type: "set"} : set)]},
     {"name": "where_statement", "symbols": ["kw_where", (lexer.has("ws") ? {type: "ws"} : ws), "comparison"], "postprocess":  d => {
             return [d[2]]
         } },
@@ -152,10 +155,47 @@ var grammar = {
     {"name": "value", "symbols": [(lexer.has("number") ? {type: "number"} : number)], "postprocess": d => d[0]},
     {"name": "value", "symbols": ["column_object"], "postprocess": d => d[0]},
     {"name": "key", "symbols": ["word"], "postprocess": d => d[0]},
+    {"name": "update_statement", "symbols": ["kw_update", (lexer.has("ws") ? {type: "ws"} : ws), "table_name", (lexer.has("ws") ? {type: "ws"} : ws), "set", (lexer.has("ws") ? {type: "ws"} : ws), "set_key_value_array", (lexer.has("ws") ? {type: "ws"} : ws), "where_statement"], "postprocess":  d => {
+            return{
+                "type":"update",
+                "params":{
+                    "where" : d[8],
+                    "set": d[6],
+                    "table": d[2]
+                }        
+            }
+        } },
+    {"name": "set_key_value_array", "symbols": ["set_key_value_array", (lexer.has("comma") ? {type: "comma"} : comma), (lexer.has("ws") ? {type: "ws"} : ws), "set_key_value"], "postprocess": 
+        d => {
+            let array = d[0];
+        
+            array = [...array, d[3]]
+        
+            return array;
+        }
+        },
+    {"name": "set_key_value_array", "symbols": ["set_key_value"], "postprocess": d => [d[0]]},
+    {"name": "set_key_value", "symbols": ["word", (lexer.has("ws") ? {type: "ws"} : ws), (lexer.has("equal") ? {type: "equal"} : equal), (lexer.has("ws") ? {type: "ws"} : ws), "word"], "postprocess":  d => {
+            return{
+                "key": d[0],
+                "value" :d[4],
+            }
+        } },
+    {"name": "delete_statement", "symbols": ["kw_delete", (lexer.has("ws") ? {type: "ws"} : ws), "kw_from", (lexer.has("ws") ? {type: "ws"} : ws), "table_name", (lexer.has("ws") ? {type: "ws"} : ws), "where_statement"], "postprocess":  d => {
+            return{
+                "type":"delete",
+                "params":{
+                    "where" : d[6],
+                    "table": d[4]
+                }        
+            }
+        } },
     {"name": "statement", "symbols": ["select_statement"], "postprocess": d => d[0]},
     {"name": "statement", "symbols": ["using_statement"], "postprocess": d => d[0]},
     {"name": "statement", "symbols": ["create_statement"], "postprocess": d => d[0]},
-    {"name": "statement", "symbols": ["insert_statement"], "postprocess": d => d[0]}
+    {"name": "statement", "symbols": ["insert_statement"], "postprocess": d => d[0]},
+    {"name": "statement", "symbols": ["update_statement"], "postprocess": d => d[0]},
+    {"name": "statement", "symbols": ["delete_statement"], "postprocess": d => d[0]}
 ]
   , ParserStart: "statement"
 }

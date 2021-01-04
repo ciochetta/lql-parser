@@ -4,12 +4,14 @@ const lexer = require("./lexer")
 
 @lexer lexer
 
-kw_from -> %keywords
-kw_select -> %keywords
-kw_using -> %keywords
-kw_create -> %keywords
+kw_from -> %from
+kw_select -> %select
+kw_using -> %using
+kw_create -> %create
 kw_insert -> %insert
-kw_where -> %keywords
+kw_where -> %where
+kw_update -> %update
+kw_delete -> %deletekw
 
 
 word ->  %word {% d => d[0].value %}
@@ -49,3 +51,4 @@ operator -> %smallerEqual {% d => "smallerEqual" %}
 operator -> %like {% d => "like" %}
 
 and -> %and
+set -> %set
