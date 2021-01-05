@@ -32,3 +32,18 @@ test("Parse update command with multiple sets", () => {
 	expect(result.params.table).toBe("users");
 	expect(result.type).toBe("update");
 });
+
+test("Testing a command that was problematic", () => {
+	const testCommand = "update newTable set grade = 8 where id = 0";
+
+	const parsing = parseInput(testCommand);
+
+	const result = parsing[0];
+
+	expect(result.params.set[0].key).toBe("grade");
+	expect(result.params.set[0].value).toBe("8");
+	expect(result.params.where[0].key).toBe("id");
+	expect(result.params.where[0].value).toBe("0");
+	expect(result.params.table).toBe("newTable");
+	expect(result.type).toBe("update");
+});

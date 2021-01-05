@@ -1,6 +1,6 @@
 {
 	"name": "lql-parser",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"description": "parser for my database project",
 	"main": "index.js",
 	"scripts": {
