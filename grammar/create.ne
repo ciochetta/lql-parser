@@ -1,14 +1,23 @@
 @include "base.ne"
 @lexer lexer
 
-create_statement -> kw_create %ws table_name %ws create_table_columns {% d => {
+create_table_statement -> kw_create %ws kw_table %ws table_name %ws column_name_array {% d => {
     return{
-        "type":"create",
+        "type":"create table",
         "params":{
-            "columns" : d[4],
-            "table": d[2]
+            "columns" : d[6],
+            "table": d[4]
         }
     }
 } %}
 
-create_table_columns -> column_name_array {% d => d[0] %}
+create_index_statement -> kw_create %ws kw_index %ws index_name %ws kw_on %ws table_name %ws column_name_array {% d => {
+    return{
+        "type":"create index",
+        "params":{
+            "table" : d[8],
+            "name": d[4],
+            "columns" : d[10]
+        }
+    }
+} %}

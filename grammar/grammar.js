@@ -15,6 +15,10 @@ var grammar = {
     {"name": "kw_where", "symbols": [(lexer.has("where") ? {type: "where"} : where)]},
     {"name": "kw_update", "symbols": [(lexer.has("update") ? {type: "update"} : update)]},
     {"name": "kw_delete", "symbols": [(lexer.has("deletekw") ? {type: "deletekw"} : deletekw)]},
+    {"name": "kw_bulk", "symbols": [(lexer.has("bulk") ? {type: "bulk"} : bulk)]},
+    {"name": "kw_table", "symbols": [(lexer.has("table") ? {type: "table"} : table)]},
+    {"name": "kw_index", "symbols": [(lexer.has("index") ? {type: "index"} : index)]},
+    {"name": "kw_on", "symbols": [(lexer.has("on") ? {type: "on"} : on)]},
     {"name": "word", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": d => d[0].value},
     {"name": "word", "symbols": [(lexer.has("quotationWord") ? {type: "quotationWord"} : quotationWord)], "postprocess": d => d[0].value.replaceAll('"', '')},
     {"name": "word", "symbols": [(lexer.has("quotationWordNumber") ? {type: "quotationWordNumber"} : quotationWordNumber)], "postprocess": d => d[0].value.replaceAll('"', '')},
@@ -35,6 +39,7 @@ var grammar = {
         } },
     {"name": "column_name_array", "symbols": [(lexer.has("lBracket") ? {type: "lBracket"} : lBracket), "column_name_array", (lexer.has("rBracket") ? {type: "rBracket"} : rBracket)], "postprocess": d =>  d[1]},
     {"name": "table_name", "symbols": ["word"], "postprocess": d => d[0]},
+    {"name": "index_name", "symbols": ["word"], "postprocess": d => d[0]},
     {"name": "column_name", "symbols": ["word"], "postprocess": d => d[0]},
     {"name": "database_name", "symbols": ["word"], "postprocess": d => d[0]},
     {"name": "operator", "symbols": [(lexer.has("equal") ? {type: "equal"} : equal)], "postprocess": d => "equal"},
@@ -93,16 +98,25 @@ var grammar = {
                 "params": d[2]
             }
         } },
-    {"name": "create_statement", "symbols": ["kw_create", (lexer.has("ws") ? {type: "ws"} : ws), "table_name", (lexer.has("ws") ? {type: "ws"} : ws), "create_table_columns"], "postprocess":  d => {
+    {"name": "create_table_statement", "symbols": ["kw_create", (lexer.has("ws") ? {type: "ws"} : ws), "kw_table", (lexer.has("ws") ? {type: "ws"} : ws), "table_name", (lexer.has("ws") ? {type: "ws"} : ws), "column_name_array"], "postprocess":  d => {
             return{
-                "type":"create",
+                "type":"create table",
                 "params":{
-                    "columns" : d[4],
-                    "table": d[2]
+                    "columns" : d[6],
+                    "table": d[4]
                 }
             }
         } },
-    {"name": "create_table_columns", "symbols": ["column_name_array"], "postprocess": d => d[0]},
+    {"name": "create_index_statement", "symbols": ["kw_create", (lexer.has("ws") ? {type: "ws"} : ws), "kw_index", (lexer.has("ws") ? {type: "ws"} : ws), "index_name", (lexer.has("ws") ? {type: "ws"} : ws), "kw_on", (lexer.has("ws") ? {type: "ws"} : ws), "table_name", (lexer.has("ws") ? {type: "ws"} : ws), "column_name_array"], "postprocess":  d => {
+            return{
+                "type":"create index",
+                "params":{
+                    "table" : d[8],
+                    "name": d[4],
+                    "columns" : d[10]
+                }
+            }
+        } },
     {"name": "insert_statement", "symbols": ["kw_insert", (lexer.has("ws") ? {type: "ws"} : ws), "table_name", (lexer.has("ws") ? {type: "ws"} : ws), "insert_table_columns"], "postprocess":  d => {
             return{
                 "type":"insert",
@@ -112,8 +126,25 @@ var grammar = {
                 }
             }
         } },
+    {"name": "bulk_insert_statement", "symbols": ["kw_bulk", (lexer.has("ws") ? {type: "ws"} : ws), "kw_insert", (lexer.has("ws") ? {type: "ws"} : ws), "table_name", (lexer.has("ws") ? {type: "ws"} : ws), "column_object_array"], "postprocess":  d => {
+            return{
+                "type":"bulk insert",
+                "params":{
+                    "documents" : d[6],
+                    "table": d[4]
+                }
+            }
+        } },
     {"name": "insert_table_columns", "symbols": ["column_name_array"], "postprocess": d => d[0]},
     {"name": "insert_table_columns", "symbols": ["column_object"], "postprocess": d=> d[0]},
+    {"name": "column_object_array", "symbols": ["column_object"], "postprocess": d => [d[0]]},
+    {"name": "column_object_array", "symbols": [(lexer.has("lBracket") ? {type: "lBracket"} : lBracket), "column_object_array", (lexer.has("comma") ? {type: "comma"} : comma), (lexer.has("ws") ? {type: "ws"} : ws), "column_object", (lexer.has("rBracket") ? {type: "rBracket"} : rBracket)], "postprocess":  d => {
+            let array = d[1]
+        
+            let newArray = [...array, d[4]]
+        
+            return newArray
+        } },
     {"name": "column_object", "symbols": [(lexer.has("lcBracket") ? {type: "lcBracket"} : lcBracket), "property", (lexer.has("rcBracket") ? {type: "rcBracket"} : rcBracket)], "postprocess": d=> d[1]},
     {"name": "column_object", "symbols": [(lexer.has("lcBracket") ? {type: "lcBracket"} : lcBracket), "property_multi", (lexer.has("rcBracket") ? {type: "rcBracket"} : rcBracket)], "postprocess": d=> d[1]},
     {"name": "property_multi", "symbols": ["property_multi", (lexer.has("ws") ? {type: "ws"} : ws), (lexer.has("comma") ? {type: "comma"} : comma), (lexer.has("ws") ? {type: "ws"} : ws), "property"], "postprocess": d=> { 
@@ -192,10 +223,12 @@ var grammar = {
         } },
     {"name": "statement", "symbols": ["select_statement"], "postprocess": d => d[0]},
     {"name": "statement", "symbols": ["using_statement"], "postprocess": d => d[0]},
-    {"name": "statement", "symbols": ["create_statement"], "postprocess": d => d[0]},
+    {"name": "statement", "symbols": ["create_table_statement"], "postprocess": d => d[0]},
     {"name": "statement", "symbols": ["insert_statement"], "postprocess": d => d[0]},
     {"name": "statement", "symbols": ["update_statement"], "postprocess": d => d[0]},
-    {"name": "statement", "symbols": ["delete_statement"], "postprocess": d => d[0]}
+    {"name": "statement", "symbols": ["delete_statement"], "postprocess": d => d[0]},
+    {"name": "statement", "symbols": ["bulk_insert_statement"], "postprocess": d => d[0]},
+    {"name": "statement", "symbols": ["create_index_statement"], "postprocess": d => d[0]}
 ]
   , ParserStart: "statement"
 }

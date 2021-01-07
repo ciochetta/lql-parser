@@ -1,6 +1,10 @@
 const moo = require("moo");
 
 const lexer = moo.compile({
+	on: "on",
+	index: "index",
+	table: "table",
+	bulk: "bulk",
 	where: "where",
 	create: "create",
 	using: "using",

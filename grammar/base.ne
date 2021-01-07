@@ -12,6 +12,11 @@ kw_insert -> %insert
 kw_where -> %where
 kw_update -> %update
 kw_delete -> %deletekw
+kw_bulk -> %bulk
+kw_table -> %table
+kw_index -> %index
+kw_on -> %on
+
 
 
 word ->  %word {% d => d[0].value %}
@@ -38,6 +43,8 @@ column_name_array -> %lBracket column_name_array %rBracket {% d =>  d[1] %}
 
 
 table_name -> word {% d => d[0] %}
+
+index_name -> word {% d => d[0] %}
 
 column_name -> word {% d => d[0] %}
 

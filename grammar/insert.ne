@@ -11,8 +11,27 @@ insert_statement -> kw_insert %ws table_name %ws insert_table_columns {% d => {
     }
 } %}
 
+bulk_insert_statement -> kw_bulk %ws kw_insert %ws table_name %ws column_object_array {% d => {
+    return{
+        "type":"bulk insert",
+        "params":{
+            "documents" : d[6],
+            "table": d[4]
+        }
+    }
+} %}
+
 insert_table_columns -> column_name_array {% d => d[0] %}
 insert_table_columns -> column_object {% d=> d[0] %}
+
+column_object_array -> column_object {% d => [d[0]] %}
+column_object_array -> %lBracket column_object_array %comma %ws column_object %rBracket {% d => {
+    let array = d[1]
+
+    let newArray = [...array, d[4]]
+
+    return newArray
+} %}
 
 column_object -> %lcBracket property %rcBracket {% d=> d[1] %}
 column_object -> %lcBracket property_multi %rcBracket {% d=> d[1] %}
