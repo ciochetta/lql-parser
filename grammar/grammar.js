@@ -137,6 +137,7 @@ var grammar = {
         } },
     {"name": "insert_table_columns", "symbols": ["column_name_array"], "postprocess": d => d[0]},
     {"name": "insert_table_columns", "symbols": ["column_object"], "postprocess": d=> d[0]},
+    {"name": "column_object_array", "symbols": [(lexer.has("lBracket") ? {type: "lBracket"} : lBracket), "column_object", (lexer.has("rBracket") ? {type: "rBracket"} : rBracket)], "postprocess": d => [d[1]]},
     {"name": "column_object_array", "symbols": ["column_object"], "postprocess": d => [d[0]]},
     {"name": "column_object_array", "symbols": [(lexer.has("lBracket") ? {type: "lBracket"} : lBracket), "column_object_array", (lexer.has("comma") ? {type: "comma"} : comma), (lexer.has("ws") ? {type: "ws"} : ws), "column_object", (lexer.has("rBracket") ? {type: "rBracket"} : rBracket)], "postprocess":  d => {
             let array = d[1]
@@ -228,9 +229,10 @@ var grammar = {
     {"name": "statement", "symbols": ["update_statement"], "postprocess": d => d[0]},
     {"name": "statement", "symbols": ["delete_statement"], "postprocess": d => d[0]},
     {"name": "statement", "symbols": ["bulk_insert_statement"], "postprocess": d => d[0]},
-    {"name": "statement", "symbols": ["create_index_statement"], "postprocess": d => d[0]}
+    {"name": "statement", "symbols": ["create_index_statement"], "postprocess": d => d[0]},
+    {"name": "statement_array", "symbols": ["statement"], "postprocess": d => d[0]}
 ]
-  , ParserStart: "statement"
+  , ParserStart: "statement_array"
 }
 if (typeof module !== 'undefined'&& typeof module.exports !== 'undefined') {
    module.exports = grammar;

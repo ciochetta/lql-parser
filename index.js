@@ -12,7 +12,9 @@ const parseInput = function (input) {
 
 		const results = thisParser.finish();
 
-		return results;
+		const statement = results[0];
+
+		return statement;
 	} catch (error) {
 		console.log(error);
 

@@ -3,9 +3,7 @@ const { parseInput } = require("../index");
 test("Parse basic command", () => {
 	const testCommand = "select * from users";
 
-	const parsing = parseInput(testCommand);
-
-	const result = parsing[0];
+	const result = parseInput(testCommand);
 
 	expect(result.params.columns).toBe("star");
 	expect(result.params.table).toBe("users");
@@ -15,9 +13,7 @@ test("Parse basic command", () => {
 test("Parse command with a column", () => {
 	const testCommand = "select name from users";
 
-	const parsing = parseInput(testCommand);
-
-	const result = parsing[0];
+	const result = parseInput(testCommand);
 
 	expect(result.params.columns[0]).toBe("name");
 	expect(result.params.table).toBe("users");
@@ -27,9 +23,7 @@ test("Parse command with a column", () => {
 test("Parse command with a quotation word as column", () => {
 	const testCommand = `select "name" from users`;
 
-	const parsing = parseInput(testCommand);
-
-	const result = parsing[0];
+	const result = parseInput(testCommand);
 
 	expect(result.params.columns[0]).toBe("name");
 	expect(result.params.table).toBe("users");
@@ -39,9 +33,7 @@ test("Parse command with a quotation word as column", () => {
 test("Parse command with an array word as columns", () => {
 	const testCommand = `select ["name", "password"] from users`;
 
-	const parsing = parseInput(testCommand);
-
-	const result = parsing[0];
+	const result = parseInput(testCommand);
 
 	expect(result.params.columns[0]).toBe("name");
 	expect(result.params.columns[1]).toBe("password");
@@ -52,9 +44,7 @@ test("Parse command with an array word as columns", () => {
 test("Parse command with where clause", () => {
 	const testCommand = "select * from users where id = 1";
 
-	const parsing = parseInput(testCommand);
-
-	const result = parsing[0];
+	const result = parseInput(testCommand);
 
 	expect(result.params.columns).toBe("star");
 	expect(result.params.table).toBe("users");
@@ -67,9 +57,7 @@ test("Parse command with where clause", () => {
 test("Parse command with two where clauses", () => {
 	const testCommand = "select * from users where id = 1 and name like afonso";
 
-	const parsing = parseInput(testCommand);
-
-	const result = parsing[0];
+	const result = parseInput(testCommand);
 
 	expect(result.params.columns).toBe("star");
 	expect(result.params.table).toBe("users");
@@ -86,9 +74,7 @@ test("Parse command with three where clauses", () => {
 	const testCommand =
 		"select * from users where id = 1 and name like afonso and password < 2";
 
-	const parsing = parseInput(testCommand);
-
-	const result = parsing[0];
+	const result = parseInput(testCommand);
 
 	expect(result.params.columns).toBe("star");
 	expect(result.params.table).toBe("users");

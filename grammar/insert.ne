@@ -24,6 +24,7 @@ bulk_insert_statement -> kw_bulk %ws kw_insert %ws table_name %ws column_object_
 insert_table_columns -> column_name_array {% d => d[0] %}
 insert_table_columns -> column_object {% d=> d[0] %}
 
+column_object_array -> %lBracket column_object %rBracket {% d => [d[1]] %}
 column_object_array -> column_object {% d => [d[0]] %}
 column_object_array -> %lBracket column_object_array %comma %ws column_object %rBracket {% d => {
     let array = d[1]

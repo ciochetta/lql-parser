@@ -3,9 +3,7 @@ const { parseInput } = require("../index");
 test("Parse delete command", () => {
 	const testCommand = "delete from users where id = 2";
 
-	const parsing = parseInput(testCommand);
-
-	const result = parsing[0];
+	const result = parseInput(testCommand);
 
 	expect(result.params.where[0].key).toBe("id");
 	expect(result.params.where[0].value).toBe("2");

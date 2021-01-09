@@ -3,9 +3,7 @@ const { parseInput } = require("../index");
 test("Parse update command", () => {
 	const testCommand = "update users set name = luis where id = 1";
 
-	const parsing = parseInput(testCommand);
-
-	const result = parsing[0];
+	const result = parseInput(testCommand);
 
 	expect(result.params.set[0].key).toBe("name");
 	expect(result.params.set[0].value).toBe("luis");
@@ -19,9 +17,7 @@ test("Parse update command with multiple sets", () => {
 	const testCommand =
 		"update users set name = luis, password = admin123 where id = 1";
 
-	const parsing = parseInput(testCommand);
-
-	const result = parsing[0];
+	const result = parseInput(testCommand);
 
 	expect(result.params.set[0].key).toBe("name");
 	expect(result.params.set[0].value).toBe("luis");
@@ -36,9 +32,7 @@ test("Parse update command with multiple sets", () => {
 test("Testing a command that was problematic", () => {
 	const testCommand = "update newTable set grade = 8 where id = 0";
 
-	const parsing = parseInput(testCommand);
-
-	const result = parsing[0];
+	const result = parseInput(testCommand);
 
 	expect(result.params.set[0].key).toBe("grade");
 	expect(result.params.set[0].value).toBe("8");

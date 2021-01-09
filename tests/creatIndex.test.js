@@ -3,9 +3,7 @@ const { parseInput } = require("../index");
 test("Parse create index command", () => {
 	const testCommand = "create index myIndex on users username";
 
-	const parsing = parseInput(testCommand);
-
-	const result = parsing[0];
+	const result = parseInput(testCommand);
 
 	expect(result.params.name).toBe("myIndex");
 	expect(result.params.table).toBe("users");

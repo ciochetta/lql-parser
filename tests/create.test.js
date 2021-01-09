@@ -3,9 +3,7 @@ const { parseInput } = require("../index");
 test("Parse basic command", () => {
 	const testCommand = "create table users username";
 
-	const parsing = parseInput(testCommand);
-
-	const result = parsing[0];
+	const result = parseInput(testCommand);
 
 	expect(result.params.table).toBe("users");
 	expect(result.params.columns[0]).toBe("username");
@@ -15,9 +13,7 @@ test("Parse basic command", () => {
 test("Parse command with string", () => {
 	const testCommand = `create table users "username"`;
 
-	const parsing = parseInput(testCommand);
-
-	const result = parsing[0];
+	const result = parseInput(testCommand);
 
 	expect(result.params.table).toBe("users");
 	expect(result.params.columns[0]).toBe("username");
@@ -27,9 +23,7 @@ test("Parse command with string", () => {
 test("Parse command with space separated array", () => {
 	const testCommand = `create table users username password`;
 
-	const parsing = parseInput(testCommand);
-
-	const result = parsing[0];
+	const result = parseInput(testCommand);
 
 	expect(result.params.table).toBe("users");
 	expect(result.params.columns[0]).toBe("username");
@@ -40,9 +34,7 @@ test("Parse command with space separated array", () => {
 test("Parse command with regular array", () => {
 	const testCommand = `create table users ["username", "password"]`;
 
-	const parsing = parseInput(testCommand);
-
-	const result = parsing[0];
+	const result = parseInput(testCommand);
 
 	expect(result.params.table).toBe("users");
 	expect(result.params.columns[0]).toBe("username");
